@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * Copyright (C) 2022 Mob Army S.R.L. - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * Written by Mob Army <info@wwtelecommunications.com>, 2022 for TELEFONICA
+ * CELULAR DE BOLIVIA S.A. (Telecel S.A.) use only.
+ -->
+<Configuration status="INFO">
+    <Properties>
+        <Property name="LOG_PATTERN1">%d{DEFAULT} %5p ${sys:PID} --- [%15.15t] %-40.40c{1.}: %m%n</Property>
+        <Property name="LOG_PATTERN2">%d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${sys:PID} --- [%15.15t] %-40.40c{1.}: %m%n</Property>
+        <Property name="LOG_PATTERN3">%d{yyyy-MM-dd' 'HH:mm:ss.SSS} %5p ${sys:PID} --- [%15.15t] %-40.40c{1.}: %m%n</Property>
+        <Property name="LOG_PATTERN4">%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ} %5p ${sys:PID} --- [%15.15t] %-40.40c{1.}: %m%n</Property>
+        <Property name="APP_LOG_PATH">logs/tgk8s18</Property>
+    </Properties>
+    <Appenders>
+        <Console name="LogToConsole" target="SYSTEM_OUT">
+            <PatternLayout pattern="${LOG_PATTERN2}" />
+        </Console>
+        <RollingFile name="LogToRollingFile"
+            fileName="${APP_LOG_PATH}/tgk8s18-service.log"
+            filePattern="${APP_LOG_PATH}/tgk8s18-service-%d{yyyy-MM-dd}-%i.log.gz"
+            ignoreExceptions="false">
+            <PatternLayout pattern="${LOG_PATTERN2}" />
+            <Policies>
+                <OnStartupTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="27 MB" />
+                <TimeBasedTriggeringPolicy />
+            </Policies>
+<!--             <CronTriggeringPolicy schedule="0 0 0 * * ?" /> -->
+            <DefaultRolloverStrategy max="11000"/>
+            <DefaultRolloverStrategy>
+                <Delete basePath="APP_LOG_PATH" maxDepth="2">
+                    <IfFileName glob="*/tgk8s18-service-*.log.gz" />
+                    <IfLastModified age="120d" />
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <Logger name="bo.tigo.mob.k8s.getdevicesavailable" level="info" additivity="false">
+            <AppenderRef ref="LogToRollingFile" />
+            <AppenderRef ref="LogToConsole" />
+        </Logger>
+        <Root level="info">
+            <AppenderRef ref="LogToRollingFile" />
+            <AppenderRef ref="LogToConsole" />
+        </Root>
+    </Loggers>
+</Configuration>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+ * Copyright (C) 2022 Mob Army S.R.L. - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * Written by Mob Army <info@wwtelecommunications.com>, 2022 for TELEFONICA
+ * CELULAR DE BOLIVIA S.A. (Telecel S.A.) use only.
+ -->
+<mapper namespace="bo.tigo.mob.k8s.getdevicesavailable.dao.ds1.MQueryDS1Mapper">
+    <!-- Result Maps -->
+    <resultMap id="SimpleQuery1Map" type="bo.tigo.mob.k8s.getdevicesavailable.dto.core.DevicesAvailable">
+        <id     column="data.devicesAvailableList.[].devicesAvailableId"                          property="devicesAvailableId"                          javaType="string"/>
+        <result column="data.devicesAvailableList.[].count"                                       property="count"                                       javaType="int"/>
+        <result column="data.devicesAvailableList.[].sku"                                         property="sku"                                         javaType="string"/>
+        <result column="data.devicesAvailableList.[].stock.stockId"                               property="stock.stockId"                               javaType="string"/>
+        <result column="data.devicesAvailableList.[].stock.resourceType"                          property="stock.resourceType"                          javaType="string"/>
+        <result column="data.devicesAvailableList.[].stock.resourceInventory.resourceInventoryId" property="stock.resourceInventory.resourceInventoryId" javaType="string"/>
+        <result column="data.devicesAvailableList.[].stock.resourceInventory.name"                property="stock.resourceInventory.name"                javaType="string"/>
+        <result column="data.devicesAvailableList.[].stock.resourceInventory.inventoryType"       property="stock.resourceInventory.inventoryType"       javaType="string"/>
+    </resultMap>
+
+    <!-- Queries -->
+    <select id="getQuery1Records" resultMap="SimpleQuery1Map">
+        <![CDATA[
+            SELECT
+                CONCAT(A.GI2JQA, '_', B.REMTA)             AS "data.devicesAvailableList.[].devicesAvailableId",
+                B.GI2L6A                                   AS "data.devicesAvailableList.[].count",
+                A.GI2JQA                                   AS "data.devicesAvailableList.[].sku",
+                B.REMTA                                    AS "data.devicesAvailableList.[].stock.stockId",
+                CASE WHEN A.GI2GWA IN (3,6) THEN 'devices'
+                    WHEN A.GI2GWA =4 THEN 'batteries'
+                    WHEN A.GI2GWA =5 THEN 'chargers'
+                END                                        AS "data.devicesAvailableList.[].stock.resourceType",
+                B.REMTA                                    AS "data.devicesAvailableList.[].stock.resourceInventory.resourceInventoryId",
+                C.LAFA                                     AS "data.devicesAvailableList.[].stock.resourceInventory.name",
+                'warehouse'                                AS "data.devicesAvailableList.[].stock.resourceInventory.inventoryType"
+            FROM
+                bccs.GI2HAT A,
+                bccs.GI2KVT B,
+                bccs.VL1FRT C
+        ]]>
+        <where>
+                AND A.GI2HXA='A'
+                AND A.GI2GWA IN (3,4,5,6)
+                AND A.GI2jqA = B.GI2jqA
+                AND B.REMTA=C.REMTA
+                AND C.VL1G3A = 'A'
+            <if test="recordSku != null and recordSku != ''">
+               AND A.GI2jqA = #{recordSku}
+            </if>
+            <if test="recordStockId != null and recordStockId != ''">
+               AND B.REMTA = #{recordStockId}
+            </if>
+        </where>
+    </select>
+
+</mapper>

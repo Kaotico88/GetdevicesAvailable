@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+ * Copyright (C) 2022 Mob Army S.R.L. - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited.
+ * Proprietary and confidential.
+ * Written by Mob Army <info@wwtelecommunications.com>, 2022 for TELEFONICA
+ * CELULAR DE BOLIVIA S.A. (Telecel S.A.) use only.
+ -->
+<mapper namespace="bo.tigo.mob.k8s.getdevicesavailable.dao.ds1.MQueryDS1Mapper">
+    <!-- Result Maps -->
+    <resultMap id="SimpleQuery1Map" type="bo.tigo.mob.k8s.getdevicesavailable.dto.core.DevicesAvailable">
+        <id     column="rene1"  property="devicesAvailableId"                          javaType="string"/>
+        <result column="rene2"  property="count"                                       javaType="int"/>
+        <result column="rene3"  property="sku"                                         javaType="string"/>
+        <result column="rene4"  property="stock.stockId"                               javaType="string"/>
+        <result column="rene5"  property="stock.resourceType"                          javaType="string"/>
+        <result column="rene6"	property="stock.resourceInventory.resourceInventoryId" javaType="string"/>
+        <result column="rene7"  property="stock.resourceInventory.name"                javaType="string"/>
+        <result column="rene8"  property="stock.resourceInventory.inventoryType"       javaType="string"/>
+    </resultMap>
+
+    <!-- Queries -->
+    <select id="getQuery1Records" resultMap="SimpleQuery1Map">
+        <![CDATA[
+        	SELECT
+               colum_dev_av_id AS "rene1",
+               colum_count AS "rene2",
+               colum_sku AS "rene3",
+               colum_stock_id AS "rene4", 
+               colum_resour_type AS "rene5",
+               colum_resour_inv_id AS "rene6",
+               colum_resour_name AS "rene7",
+               colum_inv_type AS "rene8"
+            FROM
+            	table_test_marco
+        ]]>
+         <where>  
+            <if test="recordSku != null and recordSku != ''">
+               AND colum_sku = #{recordSku}
+            </if>
+       		<if test="recordStockId != null and recordStockId != ''">
+               AND colum_stock_id = #{recordStockId}
+            </if>  
+        </where> 
+    </select>
+
+</mapper>

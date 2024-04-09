@@ -1,0 +1,24 @@
+#**************************************************************************
+# Copyright (C) 2022 Mob Army S.R.L. - All Rights Reserved
+# Unauthorized copying of this file, via any medium is strictly prohibited.
+# Proprietary and confidential.
+# Written by Mob Army <info@wwtelecommunications.com>, 2022 for TELEFONICA
+# CELULAR DE BOLIVIA S.A. (Telecel S.A.) use only.
+# *************************************************************************
+
+version: "3.2"
+services:
+    tgk8s18_getdevicesavailable:
+        container_name: tgk8s18_getdevicesavailable
+        image: mobarmy/tgk8s18_getdevicesavailable:1.0.0-SNAPSHOT
+        build: .
+        ports:
+            - 9091:9091
+        command: java -jar tgk8s18-getdevicesavailable-1.0.0-SNAPSHOT.jar --spring.config.location=/usr/src/application.properties
+        volumes:
+            - ./src/main/resources/application.properties:/usr/src/application.properties
+        networks:
+            - tg_network_local
+networks:
+    tg_network_local:
+        external: true

@@ -1,0 +1,115 @@
+#**************************************************************************
+# Copyright (C) 2022 Mob Army S.R.L. - All Rights Reserved
+# Unauthorized copying of this file, via any medium is strictly prohibited.
+# Proprietary and confidential.
+# Written by Mob Army <info@wwtelecommunications.com>, 2022 for TELEFONICA
+# CELULAR DE BOLIVIA S.A. (Telecel S.A.) use only.
+# *************************************************************************
+
+# Deployment tgk8s18-getdevicesavailable
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: tgk8s18-getdevicesavailable
+    namespace: apis-tg
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: tgk8s18-getdevicesavailable
+    template:
+        metadata:
+            name: tgk8s18-getdevicesavailable
+            labels:
+                app: tgk8s18-getdevicesavailable
+        spec:
+            containers:
+                - name: tgk8s18-getdevicesavailable
+                  image: mobarmy/tgk8s18_getdevicesavailable:1.0.0-SNAPSHOT
+                  command: ["/bin/sh", "-c"]
+                  args:
+                      - java -jar tgk8s18-getdevicesavailable-1.0.0-SNAPSHOT.jar --spring.config.location=/usr/src/application.properties
+                  resources:
+                      limits:
+                          memory: "512Mi"
+                          cpu: "500m"
+                  ports:
+                      - containerPort: 9091
+                  volumeMounts:
+                      - mountPath: /usr/src/
+                        name: properties-tgk8s18
+
+                      - mountPath: /logs/tgk8s18
+                        name: logs-tgk8s18
+            volumes:
+                - name: properties-tgk8s18
+                  configMap:
+                        name: tgk8s18-getdevicesavailable
+                        items:
+                            -   key: application.properties
+                                path: application.properties
+
+                - name: logs-tgk8s18
+                  hostPath:
+                      path: /home/mobarmy/deployments/logs/apis/tgk8s18
+                      type: Directory
+---
+# Service tgk8s18-getdevicesavailable
+apiVersion: v1
+kind: Service
+metadata:
+    name: tgk8s18-getdevicesavailable
+    namespace: apis-tg
+spec:
+    type: NodePort
+    selector:
+        app: tgk8s18-getdevicesavailable
+    ports:
+        - protocol: TCP
+          port: 9091
+          targetPort: 9091
+          nodePort: 30000
+---
+# ConfigMap tgk8s18-getdevicesavailable
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: tgk8s18-getdevicesavailable
+    namespace: apis-tg
+data:
+    application.properties: |-
+        # Define a custom port instead of the default 9091
+        server.port=9091
+        ##
+        ## Security
+        ##
+        spring.security.user.name=admin
+        spring.security.user.password=admin
+        spring.security.user.roles=ADMIN
+        ##
+        ## WS properties
+        ##
+
+        ##
+        ## DataBase
+        ## Spring DATASOURCE (DataSourceAutoConfiguration & DataSourceProperties)
+        ## HikariCP settings
+        ##
+        # Indica la fuente del properties (jar: INTERNAL_FILE, file: EXTERNAL_FILE)
+        mobarmy.properties.source=INTERNAL_FILE
+        ##### DBSource-ONE
+        spring.datasource.one.hikari.jdbc-url=jdbc:mariadb://memsql.dev/bccs
+        spring.datasource.one.hikari.username=username
+        spring.datasource.one.hikari.password=password
+        spring.datasource.one.hikari.driver-class-name=org.mariadb.jdbc.Driver
+        spring.datasource.one.hikari.connection-timeout=60000
+        spring.datasource.one.hikari.minimum-idle=3
+        spring.datasource.one.hikari.maximum-pool-size=8
+        spring.datasource.one.hikari.idle-timeout=300000
+        spring.datasource.one.hikari.max-lifetime=1200000
+        spring.datasource.one.hikari.auto-commit=true
+        ##
+        ## MyBatis properties
+        ##
+        # The location of the mapper files
+        mybatis.mapper-locations=classpath*:/etc/mybatis/*Mapper.xml
