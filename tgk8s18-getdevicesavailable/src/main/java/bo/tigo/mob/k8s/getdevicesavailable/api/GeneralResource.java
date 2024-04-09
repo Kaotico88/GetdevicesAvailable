@@ -92,7 +92,7 @@ public class GeneralResource {
         if (stockId != null && stockId.trim().isEmpty()) {
             throw new CustomRuntimeException(HttpStatus.BAD_REQUEST, 400, "El parámetro 'stockId' no es válido.");
         }
-
+//       aca verificar el ordeb de los parametros es importente
         responseObj = service.getQueryRecords(ofNullable(sku), ofNullable(stockId), sessionLogId);
 
         // Si responseObj == null || responseObj.getDataList().isEmpty()
